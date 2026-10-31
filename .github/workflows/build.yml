@@ -1,13 +1,14 @@
 name: Build TapLuyenPro APK
 
 on:
-  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04  # ❗ Đổi thành 22.04 cho ổn định hơn
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -15,22 +16,22 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
           java-version: '17'
+          distribution: 'temurin'
 
+      # ✅ Dùng v2 thay vì v3 — này rất ổn định
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Grant execute permission
-        run: chmod +x TapLuyenPro/gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Build APK
-        working-directory: TapLuyenPro
+      - name: Build Debug APK
         run: ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: TapLuyenPro-APK
-          path: TapLuyenPro/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
           
